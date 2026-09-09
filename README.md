@@ -26,6 +26,40 @@ A read-only desktop utility for **EverQuest Legends** inventory exports. **EQL I
 - Copy or save a full text report.
 - Completely read-only: the program never changes your EQL inventory or game files.
 
+## Web API starter (early implementation)
+
+This repository now includes an initial read-only web backend in [web_api/app.py](web_api/app.py) that exposes inventory analysis through HTTP.
+
+Current endpoints:
+
+- `GET /health`
+- `POST /analyze-text` (JSON body with inventory text)
+- `POST /analyze-file` (multipart file upload)
+
+Shared parser and merge logic for web reuse lives in [core/analysis.py](core/analysis.py).
+
+### Run locally
+
+Install web dependencies:
+
+```bash
+python -m pip install -r requirements-web.txt
+```
+
+Start the API server:
+
+```bash
+uvicorn web_api.app:app --reload
+```
+
+Open API docs:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+This web API does not persist uploaded inventory data.
+
 ## Download
 
 For normal users, use the standalone files attached to a GitHub Release rather than running from source.
