@@ -1,0 +1,23 @@
+name: Feature request
+description: Suggest an improvement to EQL Inventory Cleaner
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Proposed behavior
+      description: Describe how you would like the feature to work.
+    validations:
+      required: true
+  - type: textarea
+    id: eql_context
+    attributes:
+      label: EQL-specific context
+      description: If this depends on an EQL mechanic, quest, item, or export behavior, include the relevant details/source.

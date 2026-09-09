@@ -1,0 +1,89 @@
+name: Build and release standalone apps
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install build dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Build Windows executable
+        run: >-
+          python -m PyInstaller
+          --noconfirm
+          --clean
+          --onefile
+          --windowed
+          --name EQL-Inventory-Cleaner
+          eql_inventory_cleaner.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EQL-Inventory-Cleaner-Windows
+          path: dist/EQL-Inventory-Cleaner.exe
+
+  linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Linux Tk dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-tk
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install build dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Build Linux executable
+        run: >-
+          python -m PyInstaller
+          --noconfirm
+          --clean
+          --onefile
+          --windowed
+          --name EQL-Inventory-Cleaner
+          eql_inventory_cleaner.py
+      - name: Mark Linux executable
+        run: chmod +x dist/EQL-Inventory-Cleaner
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EQL-Inventory-Cleaner-Linux-x86_64
+          path: dist/EQL-Inventory-Cleaner
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [windows, linux]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: EQL-Inventory-Cleaner-*
+          path: release-assets
+          merge-multiple: true
+      - name: Show release assets
+        run: ls -lah release-assets
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            release-assets/EQL-Inventory-Cleaner.exe \
+            release-assets/EQL-Inventory-Cleaner \
+            --verify-tag \
+            --title "EQL Inventory Cleaner ${GITHUB_REF_NAME}" \
+            --notes-file RELEASE_NOTES.md

@@ -1,0 +1,49 @@
+name: Bug report
+description: Report a problem with parsing, merge results, the UI, or packaging
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting a problem. Please remove character/account-sensitive information from any inventory excerpts you share.
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Windows
+        - Bazzite
+        - Other Linux
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      placeholder: v1.5
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe what you expected and what actually happened.
+    validations:
+      required: true
+  - type: textarea
+    id: item
+    attributes:
+      label: Relevant item/export lines
+      description: Paste only the minimum inventory lines needed to reproduce the issue. Remove anything you do not want to share publicly.
+      render: text
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open...
+        2. Browse to...
+        3. Enable...
+        4. See...
+    validations:
+      required: true
